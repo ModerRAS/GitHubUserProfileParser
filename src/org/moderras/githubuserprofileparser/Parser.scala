@@ -27,11 +27,8 @@ object Parser {
     ret.toList
   }
 
-  def readXML(string: String):Set[String] = {
-    val children = XML.load(string).child
-    
-  }
-  def writeXML(string: String): Unit = {
+  def readXML(string: String):Set[String] = XML.load(string).child.map(_.attribute("Name").toString).toSet
+  def writeXML(string: String, list: List[String]): Unit = {
 
   }
 
