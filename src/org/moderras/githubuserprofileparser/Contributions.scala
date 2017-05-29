@@ -1,9 +1,9 @@
-package org.moderras.githubparser
-
 /**
-  * Created by ModerRAS on 2017/5/27.
+  * Created on 2017/5/29.
+  *
+  * @author ModerRAS
   */
-class Node(date:String,count:String) {
+class Contributions(date:String, count:String) {
   val Date:String = date
   val Count:String = count
 
