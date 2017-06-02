@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
   *
   * @author ModerRAS
   */
-class TreeNodes(dad: TreeNodes, inname: String, inattr: String) {
+abstract class TreeNodes(dad: TreeNodes, inname: String, inattr: String) {
   val father: TreeNodes = dad
   val name: String = inname
   val attr: String = inattr
