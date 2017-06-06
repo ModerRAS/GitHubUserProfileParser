@@ -66,8 +66,10 @@ object Parser {
   }
 
   def main(args: Array[String]): Unit = {
-    val ret = getLinks("https://github.com/moderras")
-    for (i <- ret) println(i.toString)
+    //val ret = getLinks("https://github.com/moderras")
+    //for (i <- ret) println(i.toString)
+    val a = "asd"
+    println(a == "asd")
   }
 
   def getLinks(url:String): List[Contributions] = {

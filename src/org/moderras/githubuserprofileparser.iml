@@ -10,5 +10,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="javalib" level="application" />
     <orderEntry type="library" name="scala-sdk-2.12.1" level="application" />
+    <orderEntry type="library" name="scala-sdk-2.12.2" level="application" />
+    <orderEntry type="library" name="dom4j-2.0.0-RC1-javadoc" level="project" />
   </component>
 </module>
