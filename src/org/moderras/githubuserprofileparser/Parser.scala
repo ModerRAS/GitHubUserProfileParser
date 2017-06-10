@@ -36,25 +36,12 @@ object Parser {
       */
     def translate(nodes: Map[String, List[Contributions]]) = {
       val NodesIterator = nodes.iterator
-
-      def convent(inputs: List[Contributions]) = {
-        var map: Map[Int, List[Contributions]] = Map()
-        var list = inputs
-        var maphead = list.head
-
-        def fi1(a: Contributions): Boolean = maphead.Year == a.Year
-
-        def nfi1(a: Contributions): Boolean = maphead.Year != a.Year
-
-        //val list2 = list.filter((_) => maphead.Year == _.Year)//类型擦除了......
-        while (list.exists(nfi1)) {
-          val list2 = list.filter(fi1)
-          list = list.filter(nfi1)
-        }
+      var mymap:Map[Int,Map[Int,Map[Int,Int]]] = Map()
 
 
 
-      }
+
+
 
 
     }
