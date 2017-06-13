@@ -7,6 +7,6 @@ To get some users' profile
 - requests
 - datetime
 - calendar
-# install 
+# Neew to install 
 pip install beautifulsoup4 sqlite3 requests datetime calendar
-# or use Anaconda3
+# Or use Anaconda3
