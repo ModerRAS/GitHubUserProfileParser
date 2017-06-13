@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import sqlite3
 import requests
 import config
+from datetime import datetime
+import calendar
 
 conn = sqlite3.connect("data.db")
 
@@ -92,12 +94,22 @@ def count_year(name, year):
         return i[0]
 
 
-def save_to_file(file_name, data: list):
-    with open(file=file_name,mode="w") as file:
-        to_write = ["Name\t\tYear\tMonth\tCount\n",]
+def count_day(name, year, month, day):
+    for i in conn.execute(
+            "select distinct count(*) from datatable where name=? and year=? and month=? and day=? and count>0",
+            (name, year, month, day)):
+        if i[0] > 0:
+            return 1
+        else:
+            return 0
+
+
+def save_to_file_normal(file_name, data: list):
+    with open(file=file_name, mode="w") as file:
+        to_write = ["Name\t\tYear\tMonth\tCount\n", ]
         for person in data:
             for date in person:
-                to_write.append(date[0]+"\t"+date[1]+"\t"+date[2]+"\t"+date[3]+"\n")
+                to_write.append(date[0] + "\t" + date[1] + "\t" + date[2] + "\t" + date[3] + "\n")
         write = ""
         for i in to_write:
             write += i
@@ -106,12 +118,45 @@ def save_to_file(file_name, data: list):
             print(write)
 
 
+def save_to_file_normal_md(file_name, data: list):
+    with open(file=file_name, mode="w") as file:
+        to_write = ["Name|Year|Month|Count\n", "----|----|-----|-----\n"]
+        for person in data:
+            for date in person:
+                to_write.append("|" + date[0] + "|" + date[1] + "|" + date[2] + "|" + date[3] + "\n")
+        write = ""
+        for i in to_write:
+            write += i
+        file.write(write)
+        if config.print_on_cmd:
+            print(write)
 
-if __name__ == '__main__':
-    if config.parser:
-        delete_all(False)
-        parser()
-        conn.commit()
+
+def get_last_week_datetime():
+    today = datetime.today()
+    weekday = today.weekday()
+    day = today.day - weekday - 1
+    month = today.month
+    year = today.year
+    seven_days = []
+    if day > 0:
+        for i in range(day-6, day + 1):
+            seven_days.append([year, month, i])
+    if day - 7 < 0:
+        if month - 1 <= 0:
+            first_day, month_range = calendar.monthrange(year - 1, 12)
+            this_first = month_range - 7 + day
+            for i in range(this_first, month_range + 1):
+                seven_days.append([year - 1, 12, i])
+        else:
+            first_day, month_range = calendar.monthrange(year, month - 1)
+            this_first = month_range - 7 + day
+            for i in range(this_first, month_range + 1):
+                seven_days.append([year, month - 1, i])
+    return seven_days
+
+
+def get_conp():
     data = []
     for name in config.person:
         person = []
@@ -123,7 +168,65 @@ if __name__ == '__main__':
                 out = count_year(str(name), str(date[0]))
                 person.append([str(name), str(date[0]), "None", str(out)])
         data.append(person)
+    return data
+
+
+def get_week_conp():
+    data = []
+    for name in config.person:
+        person = []
+        count = 0
+        for date in get_last_week_datetime():
+            count += count_day(str(name), str(date[0]), str(date[1]), str(date[2]))
+        person.append(str(name))
+        person.append(str(count))
+        data.append(person)
+    return data
+
+
+def save_to_file_week_md(file_name, data: list):
+    with open(file=file_name, mode="w") as file:
+        to_write = ["Name|Count\n", "----|-----\n"]
+        for person in data:
+            to_write.append(person[0] + "|" + person[1] + "\n")
+        write = ""
+        for i in to_write:
+            write += i
+        file.write(write)
+        if config.print_on_cmd:
+            print(write)
+
+
+def save_to_file_week(file_name, data: list):
+    with open(file=file_name, mode="w") as file:
+        to_write = ["Name\t\tCount\n", ]
+        for person in data:
+            to_write.append(person[0] + "\t\t" + person[1] + "\n")
+        write = ""
+        for i in to_write:
+            write += i
+        file.write(write)
+        if config.print_on_cmd:
+            print(write)
+
+
+if __name__ == '__main__':
+    if config.parser:
+        # delete_all(False)
+        parser()
+        conn.commit()
     if config.save_on_the_file:
-        save_to_file(config.file, data)
+        if config.depends_on_week:
+            pass
+        elif config.get_last_week:
+            if config.use_markdown:
+                save_to_file_week_md(config.file,get_week_conp())
+            else:
+                save_to_file_week(config.file,get_week_conp())
+        else:
+            if config.use_markdown:
+                save_to_file_normal_md(config.file,get_conp())
+            else:
+                save_to_file_normal(config.file, get_conp())
 
     conn.close()
