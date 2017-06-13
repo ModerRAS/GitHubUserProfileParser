@@ -57,16 +57,6 @@ def main(name: str):
 
 
 def parser():
-    try:
-        conn.execute('''CREATE TABLE datatable(
-                        name TEXT NOT NULL,
-                        year INTEGER NOT NULL,
-                        month INTEGER NOT NULL,
-                        day INTEGER NOT NULL,
-                        count INTEGER NOT NULL
-                        )''')
-    except sqlite3.OperationalError:
-        pass
     # PRIMARY KEY(name)
     f = map(main, config.person)
 
@@ -211,14 +201,22 @@ def save_to_file_week(file_name, data: list):
 
 
 if __name__ == '__main__':
+    try:
+        conn.execute('''CREATE TABLE datatable(
+                        name TEXT NOT NULL,
+                        year INTEGER NOT NULL,
+                        month INTEGER NOT NULL,
+                        day INTEGER NOT NULL,
+                        count INTEGER NOT NULL
+                        )''')
+    except sqlite3.OperationalError:
+        pass
     if config.parser:
-        # delete_all(False)
+        delete_all(False)
         parser()
         conn.commit()
     if config.save_on_the_file:
-        if config.depends_on_week:
-            pass
-        elif config.get_last_week:
+        if config.get_last_week:
             if config.use_markdown:
                 save_to_file_week_md(config.file,get_week_conp())
             else:
