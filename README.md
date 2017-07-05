@@ -1,2 +1,2 @@
 # GitHubUserProfileParser
-To get some users' profile
+To get some users' profile.
